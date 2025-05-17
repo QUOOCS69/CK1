@@ -134,21 +134,25 @@
 
             // Gửi dữ liệu đến Google Apps Script
             try {
-                const response = await fetch('https://script.google.com/macros/s/AKfycbzRJo2AEQsWgfEbu9w95jZMJkcCBaYT0qrzoPU6f37zZ7yQ5PsfhVdm1wq-LAShiZdAfA/exec', {
+                const response = await fetch('https://script.google.com/macros/s/AKfycbwF62zlN0xlxEUYZgg8C5ZEE8GET6eQjEtpvmCl0N8zcO7-W0kJKmszgpHmg9aip_JXrA/exec', {
                     method: 'POST',
-                    mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, phone })
                 });
-                console.log('Thông tin người dùng:', { name, phone });
-                messageDiv.style.display = 'block';
-                document.getElementById('name').value = '';
-                document.getElementById('consent').checked = false;
-                document.getElementById('phone').value = '';
-                document.getElementById('phone').disabled = true;
-                setTimeout(() => {
-                    messageDiv.style.display = 'none';
-                }, 3000);
+                if (response.ok) {
+                    console.log('Thông tin người dùng:', { name, phone });
+                    messageDiv.style.display = 'block';
+                    document.getElementById('name').value = '';
+                    document.getElementById('consent').checked = false;
+                    document.getElementById('phone').value = '';
+                    document.getElementById('phone').disabled = true;
+                    setTimeout(() => {
+                        messageDiv.style.display = 'none';
+                    }, 3000);
+                } else {
+                    errorDiv.textContent = 'Có lỗi khi gửi thông tin, vui lòng thử lại!';
+                    errorDiv.style.display = 'block';
+                }
             } catch (error) {
                 errorDiv.textContent = 'Có lỗi khi gửi thông tin, vui lòng thử lại!';
                 errorDiv.style.display = 'block';
