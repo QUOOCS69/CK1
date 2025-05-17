@@ -134,21 +134,25 @@
 
             // Gửi dữ liệu đến Google Apps Script
             try {
-                const response = await fetch('https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLjpZ3Q6iry3I9--AliTBWGskWEoSch5jxscs2FFeWvYo_C4asL9JUi_lRg8F2vfm68rD-lsm8oZszQQ0yT6_Ibwvm4xh07Ph8P3p1SG_mw3KAn9ysv-L7_kRlvrEr8cNAwXthFWueQWWJspDE7wVYiGL7zJY5QP8C8r4V9SwKVRVz1yniOHLrVaiM9iuB2CahlbRUtBBK_VdxqeOL8iNKBFnwX7A_ryE9jvDnAiUWTEEEkTOlfYvUqQv_ZhvHlnvarskJID8FY4K71L40QNSiKG093PZBLZGDwiNW-C&lib=MSBgVbLxAR9KnOlQXLH-6Ht6XxpCJHRM8', {
+                const response = await fetch('https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLjB8qbrRj5gUSnOQ_PZD3nv-h-RtKDthj-onRXTJcEUlsLcyh2Ad_Zdf9_gl-pwnuAOvJ7GGPuWYJUC9j9umeMJtyxww2X1zecmqCLgIfLqllIryRFfKq0IEwRFbJn2o5NSA34DzIk_BVmQchRMtcHnP4aIZGskzi7ciZ5gMUtA45rObROGgo3kBhe4uxPwUZIN8QLxOBhatRjU3JAYsUhU3maJPg_Ok5MbNyXZh-X4MR6898mMrcw7CWbuRCEUBMLfBJELb9mfiN70IvpnZ10BmTxBpvn0gC8AhfI8&lib=MSBgVbLxAR9KnOlQXLH-6Ht6XxpCJHRM8', {
                     method: 'POST',
-                    mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, phone })
                 });
-                console.log('Thông tin người dùng:', { name, phone });
-                messageDiv.style.display = 'block';
-                document.getElementById('name').value = '';
-                document.getElementById('consent').checked = false;
-                document.getElementById('phone').value = '';
-                document.getElementById('phone').disabled = true;
-                setTimeout(() => {
-                    messageDiv.style.display = 'none';
-                }, 3000);
+                if (response.ok) {
+                    console.log('Thông tin người dùng:', { name, phone });
+                    messageDiv.style.display = 'block';
+                    document.getElementById('name').value = '';
+                    document.getElementById('consent').checked = false;
+                    document.getElementById('phone').value = '';
+                    document.getElementById('phone').disabled = true;
+                    setTimeout(() => {
+                        messageDiv.style.display = 'none';
+                    }, 3000);
+                } else {
+                    errorDiv.textContent = 'Có lỗi khi gửi thông tin, vui lòng thử lại!';
+                    errorDiv.style.display = 'block';
+                }
             } catch (error) {
                 errorDiv.textContent = 'Có lỗi khi gửi thông tin, vui lòng thử lại!';
                 errorDiv.style.display = 'block';
