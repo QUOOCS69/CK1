@@ -134,7 +134,7 @@
 
             // Gửi dữ liệu đến Google Apps Script
             try {
-                const response = await fetch('https://script.google.com/macros/s/AKfycbwF62zlN0xlxEUYZgg8C5ZEE8GET6eQjEtpvmCl0N8zcO7-W0kJKmszgpHmg9aip_JXrA/exec', {
+                const response = await fetch('https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLh5iZIcmwcUnxLRptSnunnwacz9eTdZW8w7mb99_z01U77jsnliftx8AlyzeexR0USriPHGAuvEsE5lycqzhyrtxk0Ll48WtAgsKsi1-hSfyYsWKIcIVMRJbRSIJRrlKEUUetxzmkuzcXf9V5mOgrIveOlZ_hZmC3v8Jznp410NEs4ftbVJeg2kbYEPQK_SzTmINl_oW4Vk0M1Pc6aANEyLzg_RbzbswosAUynfLobVGDcjeY2YN-aoHtvCfMqEyVx69B3ESmgdTGaU9s7qS8m9Y6QbTvFnDLht_ZlT&lib=MSBgVbLxAR9KnOlQXLH-6Ht6XxpCJHRM8', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, phone })
