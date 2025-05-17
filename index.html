@@ -1,0 +1,191 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thu thập thông tin người dùng</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="text"], input[type="tel"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="tel"]:disabled {
+            background: #f0f0f0;
+            cursor: not-allowed;
+        }
+        .consent {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .consent input {
+            margin-right: 10px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #message {
+            margin-top: 10px;
+            text-align: center;
+            color: green;
+            display: none;
+        }
+        #error {
+            margin-top: 10px;
+            text-align: center;
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Trường Trung Cấp Nghề Cơ Khí I Hà Nội</h1>
+        <label for="name">Họ và tên:</label>
+        <input type="text" id="name" placeholder="Nhập họ tên" required>
+        
+        <div class="consent">
+            <input type="checkbox" id="consent" onchange="togglePhoneInput()">
+            <label for="consent">Tôi đồng ý chia sẻ thông tin</label>
+        </div>
+        
+        <label for="phone">Số điện thoại:</label>
+        <input type="tel" id="phone" placeholder="Nhập số điện thoại" pattern="[0-9]{10}" required disabled>
+        
+        <button onclick="submitForm()">Gửi thông tin</button>
+        <div id="message">Thông tin đã được gửi!</div>
+        <div id="error"></div>
+    </div>
+
+    <script>
+        function togglePhoneInput() {
+            const consent = document.getElementById('consent').checked;
+            document.getElementById('phone').disabled = !consent;
+        }
+
+        function submitForm() {
+            const name = document.getElementById('name').value.trim();
+            const consent = document.getElementById('consent').checked;
+            const phone = document.getElementById('phone').value.trim();
+            const errorDiv = document.getElementById('error');
+
+            // Reset thông báo lỗi
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+
+            // Kiểm tra từng trường
+            if (!name) {
+                errorDiv.textContent = 'Vui lòng nhập họ tên';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            if (!consent) {
+                errorDiv.textContent = 'Vui lòng đồng ý chia sẻ thông tin';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            if (!phone) {
+                errorDiv.textContent = 'Vui lòng nhập số điện thoại';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Nếu đầy đủ, xử lý dữ liệu
+            console.log('Thông tin người dùng:', {
+                name: name,
+                phone: phone
+            });
+
+            // Hiển thị thông báo thành công
+            document.getElementById('message').style.display = 'block';
+
+            // Reset form
+            document.getElementById('name').value = '';
+            document.getElementById('consent').checked = false;
+            document.getElementById('phone').value = '';
+            document.getElementById('phone').disabled = true;
+
+            // Ẩn thông báo sau 3 giây
+            setTimeout(() => {
+                document.getElementById('message').style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
